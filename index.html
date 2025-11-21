@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AHOY 공연 셋리스트 & 방명록</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #d4b896 0%, #c9a876 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #faf6ed;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            border: 8px solid #8b6f47;
+        }
+
+        .header {
+            background: #f5e6d3;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .poster-container {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 15px;
+        }
+
+        .poster-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: #6b4423;
+        }
+
+        .header .date {
+            font-size: 1.2em;
+            color: #8b6f47;
+            margin-bottom: 5px;
+        }
+
+        .header .location {
+            font-size: 1em;
+            color: #8b6f47;
+            margin-top: 5px;
+        }
+
+        .content {
+            padding: 0;
+            background: #faf6ed;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f5e6d3;
+            border-bottom: 3px solid #8b6f47;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 20px;
+            background: transparent;
+            border: none;
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #8b6f47;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -3px;
+        }
+
+        .tab-button:hover {
+            background: rgba(139, 111, 71, 0.1);
+        }
+
+        .tab-button.active {
+            color: #6b4423;
+            border-bottom: 3px solid #6b4423;
+            background: #faf6ed;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 40px;
+            animation: fadeIn 0.3s;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section h2 {
+            display: none;
+        }
+
+        .setlist {
+            background: #f5e6d3;
+            border-radius: 10px;
+            padding: 20px;
+            border: 2px solid #d4b896;
+        }
+
+        .setlist-item {
+            padding: 12px;
+            margin: 8px 0;
+            background: #faf6ed;
+            border-left: 4px solid #8b6f47;
+            border-radius: 5px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .setlist-item:hover {
+            transform: translateY(-3px) scale(1.02);
+            background: #f5e6d3;
+            box-shadow: 0 6px 20px rgba(107, 68, 35, 0.2);
+        }
+
+        .setlist-item .number {
+            display: inline-block;
+            width: 30px;
+            color: #6b4423;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .song-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .song-title {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9em;
+        }
+
+        .song-title a {
+            color: #333;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-weight: 600;
+        }
+
+        .song-title a:hover {
+            color: #8b6f47;
+            text-decoration: underline;
+        }
+
+        .song-artist {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .members {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            justify-content: flex-end;
+        }
+
+        .member-tag {
+            padding: 4px 10px;
+            border-radius: 5px;
+            font-size: 0.85em;
+            white-space: nowrap;
+        }
+
+        .member-tag.vocal {
+            background-color: #f4d6cc;
+            color: #8b4513;
+        }
+
+        .member-tag.guitar {
+            background-color: #e8e8e8;
+            color: #555;
+        }
+
+        .member-tag.bass {
+            background-color: #e8dcc8;
+            color: #6b4423;
+        }
+
+        .member-tag.drum {
+            background-color: #d4e5f7;
+            color: #2c5aa0;
+        }
+
+        .member-tag.percussion {
+            background-color: #f5d5e5;
+            color: #8b3a62;
+        }
+
+        .guestbook-form {
+            background: #f5e6d3;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border: 2px solid #d4b896;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #8b6f47;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .char-counter {
+            text-align: right;
+            font-size: 0.9em;
+            color: #8b6f47;
+            margin-top: 5px;
+        }
+
+        .char-counter.warning {
+            color: #d9534f;
+            font-weight: bold;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #8b6f47 0%, #6b4423 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1em;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(107, 68, 35, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .guestbook-entries {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .entry {
+            background: #f5e6d3;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #8b6f47;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .entry-name {
+            font-weight: bold;
+            color: #6b4423;
+            font-size: 1.1em;
+        }
+
+        .entry-date {
+            color: #999;
+            font-size: 0.9em;
+        }
+
+        .entry-message {
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .loading {
+            text-align: center;
+            color: #8b6f47;
+            padding: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .header .date {
+                font-size: 1em;
+            }
+
+            .header .location {
+                font-size: 0.9em;
+            }
+
+            .tab-button {
+                font-size: 1em;
+                padding: 15px;
+            }
+
+            .tab-content {
+                padding: 20px;
+            }
+
+            .section h2 {
+                font-size: 1.4em;
+            }
+
+            .setlist-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .members {
+                justify-content: flex-start;
+                width: 100%;
+            }
+
+            .member-tag {
+                font-size: 0.8em;
+                padding: 3px 8px;
+            }
+
+            .song-info {
+                width: 100%;
+            }
+
+            .poster-container {
+                width: 60px;
+                height: 60px;
+            }
+
+            .container {
+                border: 4px solid #8b6f47;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="poster-container">
+                <img src="ahoy1.png" alt="AHOY 공연 포스터">
+            </div>
+            <h1>AHOY</h1>
+            <div class="date">2025년 11월 22일 6:00 PM</div>
+            <div class="location">신촌 원픽 뮤직</div>
+        </div>
+
+        <div class="content">
+            <!-- 탭 버튼 -->
+            <div class="tabs">
+                <button class="tab-button active" onclick="switchTab('setlist')">Set List</button>
+                <button class="tab-button" onclick="switchTab('guestbook')">방명록</button>
+            </div>
+
+            <!-- Set List 탭 -->
+            <div class="tab-content active" id="setlist-tab">
+                <div class="section">
+                    <h2>Set List</h2>
+                <div class="setlist">
+                    <div class="setlist-item">
+                        <span class="number">1.</span>
+                        <div class="song-info">
+                            <div class="song-title"><a href="https://www.melon.com/song/detail.htm?songId=1055513" target="_blank">Ready, Get Set, Go! – 페퍼톤스</a></div>
+                        </div>
+                        <div class="members">
+                            <span class="member-tag vocal">V 채린</span>
+                            <span class="member-tag guitar">G 주웅</span>
+                            <span class="member-tag guitar">G 태경</span>
+                            <span class="member-tag bass">B 대연</span>
+                            <span class="member-tag drum">D 수종</span>
+                            <span class="member-tag percussion">P 채린</span>
+                        </div>
+                    </div>
+
+                    <div class="setlist-item">
+                        <span class="number">2.</span>
+                        <div class="song-info">
+                            <div class="song-title"><a href="https://www.melon.com/song/detail.htm?songId=36297161" target="_blank">Lady – Kenshi Yonezu</a></div>
+                        </div>
+                        <div class="members">
+                            <span class="member-tag vocal">V 태경</span>
+                            <span class="member-tag guitar">G 주웅</span>
+                            <span class="member-tag guitar">G 도희</span>
+                            <span class="member-tag bass">B 대연</span>
+                            <span class="member-tag drum">D 홍범</span>
+                            <span class="member-tag percussion">P 채린</span>
+                        </div>
+                    </div>
+
+                    <div class="setlist-item">
+                        <span class="number">3.</span>
+                        <div class="song-info">
+                            <div class="song-title"><a href="https://www.melon.com/song/detail.htm?songId=32243273" target="_blank">Square (2017) – 백예린</a></div>
+                        </div>
+                        <div class="members">
+                            <span class="member-tag vocal">V 진주</span>
+                            <span class="member-tag guitar">G 주웅</span>
+                            <span class="member-tag guitar">G 도희</span>
+                            <span class="member-tag bass">B 대연</span>
+                            <span class="member-tag drum">D 홍범</span>
+                            <span class="member-tag percussion">P 채린</span>
+                        </div>
+                    </div>
+
+                    <div class="setlist-item">
+                        <span class="number">4.</span>
+                        <div class="song-info">
+                            <div class="song-title"><a href="https://www.melon.com/song/detail.htm?songId=33939313" target="_blank">Antifreeze – 백예린</a></div>
+                        </div>
+                        <div class="members">
+                            <span class="member-tag vocal">V 진주</span>
+                            <span class="member-tag guitar">G 주웅</span>
+                            <span class="member-tag guitar">G 도희</span>
+                            <span class="member-tag bass">B 대연</span>
+                            <span class="member-tag drum">D 수종</span>
+                            <span class="member-tag percussion">P 채린</span>
+                        </div>
+                    </div>
+
+                    <div class="setlist-item">
+                        <span class="number">5.</span>
+                        <div class="song-info">
+                            <div class="song-title"><a href="https://www.melon.com/song/detail.htm?songId=38335044" target="_blank">지구를 가졌어도 – 윤마치</a></div>
+                        </div>
+                        <div class="members">
+                            <span class="member-tag vocal">V 채린</span>
+                            <span class="member-tag guitar">G 주웅</span>
+                            <span class="member-tag guitar">G 도희</span>
+                            <span class="member-tag bass">B 대연</span>
+                            <span class="member-tag drum">D 수종</span>
+                        </div>
+                    </div>
+
+                    <div class="setlist-item">
+                        <span class="number">6.</span>
+                        <div class="song-info">
+                            <div class="song-title"><a href="https://www.melon.com/song/detail.htm?songId=37323944" target="_blank">Happy – 데이식스</a></div>
+                        </div>
+                        <div class="members">
+                            <span class="member-tag vocal">V 채린</span>
+                            <span class="member-tag guitar">G 주웅</span>
+                            <span class="member-tag guitar">G 도희</span>
+                            <span class="member-tag bass">B 현민</span>
+                            <span class="member-tag drum">D 홍범</span>
+                            <span class="member-tag percussion">P 채린</span>
+                        </div>
+                    </div>
+
+                    <div class="setlist-item">
+                        <span class="number">7.</span>
+                        <div class="song-info">
+                            <div class="song-title"><a href="https://www.melon.com/song/detail.htm?songId=57618" target="_blank">그대에게 (YB ver.) – 신해철</a></div>
+                        </div>
+                        <div class="members">
+                            <span class="member-tag vocal">V 태경</span>
+                            <span class="member-tag guitar">G 도희</span>
+                            <span class="member-tag guitar">G 태경</span>
+                            <span class="member-tag bass">B 현민</span>
+                            <span class="member-tag drum">D 수종</span>
+                            <span class="member-tag percussion">P 채린</span>
+                        </div>
+                    </div>
+
+                    <div class="setlist-item">
+                        <span class="number">8.</span>
+                        <div class="song-info">
+                            <div class="song-title"><a href="https://www.melon.com/song/detail.htm?songId=35699220" target="_blank">Hi Bully (Acoustic ver.) – 터치드</a></div>
+                        </div>
+                        <div class="members">
+                            <span class="member-tag vocal">V 진주</span>
+                            <span class="member-tag guitar">G 주웅</span>
+                            <span class="member-tag bass">B 현민</span>
+                            <span class="member-tag drum">D 홍범</span>
+                            <span class="member-tag percussion">P 채린</span>
+                        </div>
+                    </div>
+
+                    <div class="setlist-item">
+                        <span class="number">9.</span>
+                        <div class="song-info">
+                            <div class="song-title"><a href="https://www.melon.com/song/detail.htm?songId=35412981" target="_blank">비행소녀 – 김마리</a></div>
+                        </div>
+                        <div class="members">
+                            <span class="member-tag vocal">V 진주</span>
+                            <span class="member-tag guitar">G 도희</span>
+                            <span class="member-tag guitar">G 주웅</span>
+                            <span class="member-tag bass">B 현민</span>
+                            <span class="member-tag drum">D 수종</span>
+                            <span class="member-tag percussion">P 채린</span>
+                        </div>
+                    </div>
+
+                    <div class="setlist-item">
+                        <span class="number">10.</span>
+                        <div class="song-info">
+                            <div class="song-title"><a href="https://www.melon.com/song/detail.htm?songId=39169736" target="_blank">Drive – Ed Sheeran</a></div>
+                        </div>
+                        <div class="members">
+                            <span class="member-tag vocal">V 태경</span>
+                            <span class="member-tag guitar">G 주웅</span>
+                            <span class="member-tag bass">B 현민</span>
+                            <span class="member-tag drum">D 홍범</span>
+                        </div>
+                    </div>
+
+                    <div class="setlist-item">
+                        <span class="number">11.</span>
+                        <div class="song-info">
+                            <div class="song-title"><a href="https://www.melon.com/song/detail.htm?songId=37539622" target="_blank">Birds of a Feather – Billie Eilish</a></div>
+                        </div>
+                        <div class="members">
+                            <span class="member-tag vocal">V 진주</span>
+                            <span class="member-tag guitar">G 주웅</span>
+                            <span class="member-tag bass">B 현민</span>
+                            <span class="member-tag drum">D 홍범</span>
+                            <span class="member-tag percussion">P 채린</span>
+                        </div>
+                    </div>
+
+                    <div class="setlist-item">
+                        <span class="number">12.</span>
+                        <div class="song-info">
+                            <div class="song-title"><a href="https://www.melon.com/song/detail.htm?songId=1202646" target="_blank">Tell Me Baby – RHCP</a></div>
+                        </div>
+                        <div class="members">
+                            <span class="member-tag guitar">G 태경</span>
+                            <span class="member-tag guitar">G 도희</span>
+                            <span class="member-tag bass">B 현민</span>
+                            <span class="member-tag drum">D 수종</span>
+                        </div>
+                    </div>
+
+                    <div class="setlist-item">
+                        <span class="number">13.</span>
+                        <div class="song-info">
+                            <div class="song-title"><a href="https://music.bugs.co.kr/track/80261272?wl_ref=list_tr_08_search" target="_blank">Revelations – Audioslave</a></div>
+                        </div>
+                        <div class="members">
+                            <span class="member-tag vocal">V 태경</span>
+                            <span class="member-tag guitar">G 도희</span>
+                            <span class="member-tag bass">B 대연</span>
+                            <span class="member-tag drum">D 수종</span>
+                        </div>
+                    </div>
+
+                    <div class="setlist-item">
+                        <span class="number">14.</span>
+                        <div class="song-info">
+                            <div class="song-title"><a href="https://www.melon.com/song/detail.htm?songId=34184018" target="_blank">Find Me – The Poles</a></div>
+                        </div>
+                        <div class="members">
+                            <span class="member-tag vocal">V 등혁</span>
+                            <span class="member-tag guitar">G 주웅</span>
+                            <span class="member-tag guitar">G 등혁</span>
+                            <span class="member-tag bass">B 대연</span>
+                            <span class="member-tag drum">D 홍범</span>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <!-- 방명록 탭 -->
+            <div class="tab-content" id="guestbook-tab">
+                <div class="section">
+                    <h2>방명록</h2>
+
+                <!-- 방명록 작성 폼 -->
+                <div class="guestbook-form">
+                    <div class="form-group">
+                        <label for="name">이름</label>
+                        <input type="text" id="name" placeholder="이름을 입력해주세요" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">메시지</label>
+                        <textarea id="message" placeholder="공연 소감을 남겨주세요" required maxlength="500"></textarea>
+                        <div class="char-counter">
+                            <span id="charCount">0</span> / 500자
+                        </div>
+                    </div>
+                    <button class="submit-btn" onclick="submitGuestbook()">남기기</button>
+                </div>
+
+                <!-- 방명록 목록 -->
+                <div class="guestbook-entries" id="guestbookEntries">
+                    <div class="loading">방명록을 불러오는 중...</div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 탭 전환 스크립트 -->
+    <script>
+        function switchTab(tabName) {
+            // 모든 탭 버튼과 콘텐츠 비활성화
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabButtons.forEach(button => button.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+
+            // 선택된 탭 활성화
+            if (tabName === 'setlist') {
+                document.querySelector('.tab-button:nth-child(1)').classList.add('active');
+                document.getElementById('setlist-tab').classList.add('active');
+            } else if (tabName === 'guestbook') {
+                document.querySelector('.tab-button:nth-child(2)').classList.add('active');
+                document.getElementById('guestbook-tab').classList.add('active');
+            }
+        }
+    </script>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Firebase SDK import
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getDatabase, ref, push, onValue, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+
+        // Firebase 설정
+        const firebaseConfig = {
+            apiKey: "AIzaSyCDr62KKWLOsBKAvbadt1Vy0He2VuJ33U4",
+            authDomain: "ahoy-guestbook.firebaseapp.com",
+            databaseURL: "https://ahoy-guestbook-default-rtdb.firebaseio.com",
+            projectId: "ahoy-guestbook",
+            storageBucket: "ahoy-guestbook.firebasestorage.app",
+            messagingSenderId: "453487460462",
+            appId: "1:453487460462:web:0af989400b2fa38857a67f"
+        };
+
+        // Firebase 초기화
+        let app, database;
+        try {
+            app = initializeApp(firebaseConfig);
+            database = getDatabase(app);
+
+            // 방명록 실시간 로드
+            loadGuestbook();
+        } catch (error) {
+            console.error("Firebase 초기화 오류:", error);
+            document.getElementById('guestbookEntries').innerHTML =
+                '<div class="loading">Firebase 설정이 필요합니다. 코드의 firebaseConfig를 설정해주세요.</div>';
+        }
+
+        // 글자 수 카운터 초기화
+        const messageInput = document.getElementById('message');
+        const charCount = document.getElementById('charCount');
+        const charCounter = document.querySelector('.char-counter');
+
+        messageInput.addEventListener('input', function() {
+            const currentLength = this.value.length;
+            charCount.textContent = currentLength;
+
+            // 450자 이상이면 경고 색상
+            if (currentLength >= 450) {
+                charCounter.classList.add('warning');
+            } else {
+                charCounter.classList.remove('warning');
+            }
+
+            // 500자 도달 시 알림
+            if (currentLength === 500) {
+                // 한 번만 알림 (중복 방지)
+                if (!this.dataset.alerted) {
+                    this.dataset.alerted = 'true';
+                }
+            } else {
+                delete this.dataset.alerted;
+            }
+        });
+
+        // 방명록 제출 함수
+        window.submitGuestbook = function() {
+            const nameInput = document.getElementById('name');
+            const messageInput = document.getElementById('message');
+
+            const name = nameInput.value.trim();
+            const message = messageInput.value.trim();
+
+            if (!name || !message) {
+                alert('이름과 메시지를 모두 입력해주세요.');
+                return;
+            }
+
+            if (message.length > 500) {
+                alert('메시지는 500자를 초과할 수 없습니다.');
+                return;
+            }
+
+            if (!database) {
+                alert('Firebase가 설정되지 않았습니다.');
+                return;
+            }
+
+            try {
+                const guestbookRef = ref(database, 'guestbook');
+                push(guestbookRef, {
+                    name: name,
+                    message: message,
+                    timestamp: serverTimestamp()
+                });
+
+                // 입력 필드 초기화
+                nameInput.value = '';
+                messageInput.value = '';
+
+                // 글자 수 카운터 초기화
+                document.getElementById('charCount').textContent = '0';
+                document.querySelector('.char-counter').classList.remove('warning');
+
+                alert('방명록이 등록되었습니다!');
+            } catch (error) {
+                console.error("방명록 등록 오류:", error);
+                alert('방명록 등록에 실패했습니다.');
+            }
+        };
+
+        // 방명록 로드 함수
+        function loadGuestbook() {
+            const guestbookRef = ref(database, 'guestbook');
+
+            onValue(guestbookRef, (snapshot) => {
+                const entriesContainer = document.getElementById('guestbookEntries');
+                entriesContainer.innerHTML = '';
+
+                const entries = [];
+                snapshot.forEach((childSnapshot) => {
+                    const data = childSnapshot.val();
+                    entries.push({
+                        key: childSnapshot.key,
+                        ...data
+                    });
+                });
+
+                // 최신순으로 정렬
+                entries.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+                if (entries.length === 0) {
+                    entriesContainer.innerHTML = '<div class="loading">아직 작성된 방명록이 없습니다.</div>';
+                    return;
+                }
+
+                entries.forEach(entry => {
+                    const entryDiv = document.createElement('div');
+                    entryDiv.className = 'entry';
+
+                    const date = entry.timestamp ? new Date(entry.timestamp).toLocaleString('ko-KR') : '방금 전';
+
+                    entryDiv.innerHTML = `
+                        <div class="entry-header">
+                            <div class="entry-name">${escapeHtml(entry.name)}</div>
+                            <div class="entry-date">${date}</div>
+                        </div>
+                        <div class="entry-message">${escapeHtml(entry.message)}</div>
+                    `;
+
+                    entriesContainer.appendChild(entryDiv);
+                });
+            });
+        }
+
+        // XSS 방지를 위한 HTML 이스케이프 함수
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
+    </script>
+</body>
+</html>
