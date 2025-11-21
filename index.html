@@ -13,19 +13,10 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #d4b896 0%, #c9a876 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
             background: #faf6ed;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-            border: 8px solid #8b6f47;
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
         }
 
         .header {
@@ -33,6 +24,8 @@
             padding: 30px;
             text-align: center;
             position: relative;
+            max-width: 800px;
+            margin: 0 auto;
         }
 
         .poster-container {
@@ -69,13 +62,13 @@
 
         .content {
             padding: 0;
-            background: #faf6ed;
+            max-width: 800px;
+            margin: 0 auto;
         }
 
         .tabs {
             display: flex;
             background: #f5e6d3;
-            border-bottom: 3px solid #8b6f47;
         }
 
         .tab-button {
@@ -88,8 +81,6 @@
             color: #8b6f47;
             cursor: pointer;
             transition: all 0.3s ease;
-            border-bottom: 3px solid transparent;
-            margin-bottom: -3px;
         }
 
         .tab-button:hover {
@@ -98,8 +89,8 @@
 
         .tab-button.active {
             color: #6b4423;
-            border-bottom: 3px solid #6b4423;
             background: #faf6ed;
+            border-radius: 10px 10px 0 0;
         }
 
         .tab-content {
@@ -120,17 +111,10 @@
             display: none;
         }
 
-        .setlist {
-            background: #f5e6d3;
-            border-radius: 10px;
-            padding: 20px;
-            border: 2px solid #d4b896;
-        }
-
         .setlist-item {
             padding: 12px;
             margin: 8px 0;
-            background: #faf6ed;
+            background: #f5e6d3;
             border-left: 4px solid #8b6f47;
             border-radius: 5px;
             transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
@@ -142,7 +126,7 @@
 
         .setlist-item:hover {
             transform: translateY(-3px) scale(1.02);
-            background: #f5e6d3;
+            background: #e8dcc8;
             box-shadow: 0 6px 20px rgba(107, 68, 35, 0.2);
         }
 
@@ -202,13 +186,13 @@
         }
 
         .member-tag.guitar {
-            background-color: #e8e8e8;
-            color: #555;
+            background-color: #f5f5f5;
+            color: #666;
         }
 
         .member-tag.bass {
-            background-color: #e8dcc8;
-            color: #6b4423;
+            background-color: #fff4d6;
+            color: #8b7355;
         }
 
         .member-tag.drum {
@@ -222,11 +206,8 @@
         }
 
         .guestbook-form {
-            background: #f5e6d3;
-            padding: 25px;
-            border-radius: 10px;
+            padding: 0;
             margin-bottom: 30px;
-            border: 2px solid #d4b896;
         }
 
         .form-group {
@@ -244,16 +225,16 @@
         .form-group textarea {
             width: 100%;
             padding: 12px;
-            border: 2px solid #e0e0e0;
+            border: none;
             border-radius: 8px;
             font-size: 1em;
-            transition: border-color 0.3s;
+            background: #f5e6d3;
         }
 
         .form-group input:focus,
         .form-group textarea:focus {
             outline: none;
-            border-color: #8b6f47;
+            background: #e8dcc8;
         }
 
         .form-group textarea {
@@ -348,6 +329,10 @@
         }
 
         @media (max-width: 768px) {
+            .header {
+                padding: 20px 15px;
+            }
+
             .header h1 {
                 font-size: 1.8em;
             }
@@ -362,11 +347,11 @@
 
             .tab-button {
                 font-size: 1em;
-                padding: 15px;
+                padding: 15px 10px;
             }
 
             .tab-content {
-                padding: 20px;
+                padding: 15px;
             }
 
             .section h2 {
@@ -376,6 +361,7 @@
             .setlist-item {
                 flex-direction: column;
                 align-items: flex-start;
+                padding: 10px;
             }
 
             .members {
@@ -397,15 +383,18 @@
                 height: 60px;
             }
 
-            .container {
-                border: 4px solid #8b6f47;
+            .guestbook-form {
+                padding: 0;
+            }
+
+            .entry {
+                padding: 15px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
+    <div class="header">
             <div class="poster-container">
                 <img src="ahoy1.png" alt="AHOY 공연 포스터">
             </div>
@@ -425,7 +414,6 @@
             <div class="tab-content active" id="setlist-tab">
                 <div class="section">
                     <h2>Set List</h2>
-                <div class="setlist">
                     <div class="setlist-item">
                         <span class="number">1.</span>
                         <div class="song-info">
@@ -592,7 +580,7 @@
                             <div class="song-title"><a href="https://www.melon.com/song/detail.htm?songId=1202646" target="_blank">Tell Me Baby – RHCP</a></div>
                         </div>
                         <div class="members">
-                            <span class="member-tag guitar">G 태경</span>
+                            <span class="member-tag vocal">V 태경</span>
                             <span class="member-tag guitar">G 도희</span>
                             <span class="member-tag bass">B 현민</span>
                             <span class="member-tag drum">D 수종</span>
@@ -618,14 +606,13 @@
                             <div class="song-title"><a href="https://www.melon.com/song/detail.htm?songId=34184018" target="_blank">Find Me – The Poles</a></div>
                         </div>
                         <div class="members">
-                            <span class="member-tag vocal">V 등혁</span>
+                            <span class="member-tag vocal">V 동혁</span>
                             <span class="member-tag guitar">G 주웅</span>
-                            <span class="member-tag guitar">G 등혁</span>
+                            <span class="member-tag guitar">G 동혁</span>
                             <span class="member-tag bass">B 대연</span>
                             <span class="member-tag drum">D 홍범</span>
                         </div>
                     </div>
-                </div>
                 </div>
             </div>
 
@@ -657,7 +644,6 @@
                 </div>
             </div>
         </div>
-    </div>
 
     <!-- 탭 전환 스크립트 -->
     <script>
